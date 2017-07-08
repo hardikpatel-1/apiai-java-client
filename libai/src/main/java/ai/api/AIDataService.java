@@ -167,7 +167,7 @@ public class AIDataService {
     try {
 
       request.setLanguage(config.getApiAiLanguage());
-      request.setSessionId(getSessionId(serviceContext));
+      request.setSessionId(getSessionId(request, serviceContext));
       if (StringUtils.isEmpty(request.getTimezone())) {
         request.setTimezone(getTimeZone(serviceContext));
       }
@@ -180,7 +180,7 @@ public class AIDataService {
       }
 
       final String queryData = GSON.toJson(request);
-      final String response = doTextRequest(config.getQuestionUrl(getSessionId(serviceContext)),
+      final String response = doTextRequest(config.getQuestionUrl(getSessionId(request, serviceContext)),
           queryData, additionalHeaders);
 
       if (StringUtils.isEmpty(response)) {
@@ -271,7 +271,7 @@ public class AIDataService {
       final AIRequest request = new AIRequest();
 
       request.setLanguage(config.getApiAiLanguage());
-      request.setSessionId(getSessionId(serviceContext));
+      request.setSessionId(getSessionId(request, serviceContext));
       request.setTimezone(getTimeZone(serviceContext));
 
       Map<String, String> additionalHeaders = null;
@@ -950,6 +950,13 @@ public class AIDataService {
     if (requestExtras.getLocation() != null) {
       request.setLocation(requestExtras.getLocation());
     }
+  }
+
+  private String getSessionId(AIRequest request, AIServiceContext serviceContext) {
+    if ((request != null) && (request.getSessionId() != null)) {
+      return request.getSessionId();
+    }
+    return getSessionId(serviceContext);
   }
 
   private String getSessionId(AIServiceContext serviceContext) {
